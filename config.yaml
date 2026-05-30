@@ -1,0 +1,140 @@
+# ═══════════════════════════════════════════════════════════════
+# This single file drives the entire proxy.  No database, no UI.
+# Values matching ${VAR_NAME} are resolved from the environment.
+# ═══════════════════════════════════════════════════════════════
+
+# ── Server ──
+server:
+  host: "0.0.0.0"
+  port: 3001
+  log_level: "info"        # debug | info | warning | error
+
+# ── Unified API Key ──
+# Override with UNIFIED_API_KEY env var (takes precedence).
+unified_api_key: "change-me"
+
+# ── Provider Keys ──
+# Each provider can have multiple keys for round-robin rotation.
+# Empty / unset env vars are filtered out at startup.
+providers:
+  google:
+    keys:
+      - "${GOOGLE_API_KEY}"
+  groq:
+    keys:
+      - "${GROQ_API_KEY}"
+  cerebras:
+    keys:
+      - "${CEREBRAS_API_KEY}"
+  sambanova:
+    keys:
+      - "${SAMBANOVA_API_KEY}"
+  nvidia:
+    keys:
+      - "${NVIDIA_API_KEY}"
+  mistral:
+    keys:
+      - "${MISTRAL_API_KEY}"
+  openrouter:
+    keys:
+      - "${OPENROUTER_API_KEY}"
+  github:
+    keys:
+      - "${GITHUB_API_KEY}"
+  cohere:
+    keys:
+      - "${COHERE_API_KEY}"
+  cloudflare:
+    keys:
+      - "${CLOUDFLARE_API_KEY}"      # Format: "account_id:api_token"
+  huggingface:
+    keys:
+      - "${HUGGINGFACE_API_KEY}"
+  ollama:
+    keys:
+      - "${OLLAMA_API_KEY}"
+
+# ── Fallback Chain ──
+# Router tries top-to-bottom.  Move your strongest models up.
+# Limits: rpm = requests/min, rpd = requests/day,
+#          tpm = tokens/min,   tpd = tokens/day.  null = unlimited.
+fallback_chain:
+
+  - platform: google
+    model_id: gemini-2.5-flash
+    display_name: Gemini 2.5 Flash
+    enabled: true
+    limits: { rpm: 10, rpd: 1500, tpm: 250000, tpd: null }
+
+  - platform: google
+    model_id: gemini-2.0-flash-lite
+    display_name: Gemini 2.0 Flash
+    enabled: true
+    limits: { rpm: 15, rpd: 1500, tpm: 1000000, tpd: null }
+
+  - platform: github
+    model_id: openai/gpt-4.1-mini
+    display_name: GPT-4.1 (GitHub)
+    enabled: true
+    limits: { rpm: 10, rpd: 50, tpm: 40000, tpd: null }
+
+  - platform: groq
+    model_id: meta-llama/llama-4-scout-17b-16e-instruct
+    display_name: Llama 4 Scout
+    enabled: true
+    limits: { rpm: 30, rpd: 14400, tpm: 6000, tpd: null }
+
+  - platform: cerebras
+    model_id: gpt-oss-120b
+    display_name: GPT-oss-120B (Cerebras)
+    enabled: true
+    limits: { rpm: 30, rpd: 1000, tpm: 60000, tpd: 1000000 }
+
+  - platform: sambanova
+    model_id: DeepSeek-V3.1
+    display_name: DeepSeek V3 (SambaNova)
+    enabled: true
+    limits: { rpm: 10, rpd: null, tpm: 60000, tpd: null }
+
+  - platform: nvidia
+    model_id: openai/gpt-oss-120b
+    display_name: GPT OSS 120B (NVIDIA)
+    enabled: true
+    limits: { rpm: 10, rpd: null, tpm: null, tpd: null }
+
+  - platform: mistral
+    model_id: mistral-small-latest
+    display_name: Mistral Small
+    enabled: true
+    limits: { rpm: 30, rpd: null, tpm: 150000, tpd: null }
+
+  - platform: openrouter
+    model_id: nvidia/nemotron-3-super-120b-a12b:free
+    display_name: Llama 3.3 70B (OpenRouter)
+    enabled: true
+    limits: { rpm: 10, rpd: 50, tpm: null, tpd: null }
+
+  - platform: cohere
+    model_id: command-a-03-2025
+    display_name: Command A+ (Cohere)
+    enabled: true
+    limits: { rpm: 10, rpd: 33, tpm: null, tpd: null }
+
+  - platform: huggingface
+    model_id: Qwen/Qwen3-32B
+    display_name: Qwen 3 32B (HuggingFace)
+    enabled: true
+    limits: { rpm: 10, rpd: null, tpm: null, tpd: null }
+
+  - platform: ollama
+    model_id: gpt-oss:20b
+    display_name: GPT-OSS (Ollama)
+    enabled: true
+    limits: { rpm: 5, rpd: null, tpm: null, tpd: null }
+
+  - platform: cloudflare
+    model_id: "@cf/meta/llama-4-scout-17b-16e-instruct"
+    display_name: Llama 4 Scout (Cloudflare)
+    enabled: true
+    limits: { rpm: 300, rpd: 10000, tpm: null, tpd: null }
+

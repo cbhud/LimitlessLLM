@@ -130,7 +130,7 @@ server:
 ### Unified API Key
 
 ```yaml
-unified_api_key: "freellmapi-change-me"
+unified_api_key: "change-me"
 ```
 
 This is the **single bearer token** your clients use to authenticate against the proxy. It can be overridden by the `UNIFIED_API_KEY` environment variable (recommended for production).
@@ -146,7 +146,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:3001/v1",
-    api_key="freellmapi-change-me",   # your UNIFIED_API_KEY
+    api_key="change-me",   # your UNIFIED_API_KEY
 )
 
 response = client.chat.completions.create(
@@ -177,11 +177,11 @@ for chunk in stream:
 ```bash
 # List all configured models
 curl http://localhost:3001/v1/models \
-  -H "Authorization: Bearer freellmapi-change-me"
+  -H "Authorization: Bearer change-me"
 
 # Chat completion
 curl http://localhost:3001/v1/chat/completions \
-  -H "Authorization: Bearer freellmapi-change-me" \
+  -H "Authorization: Bearer change-me" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto",
@@ -253,7 +253,7 @@ Copy `.env.example` to `.env` and fill in only the providers you have keys for. 
 
 ```env
 # The bearer token clients use to access the proxy
-UNIFIED_API_KEY=freellmapi-change-me
+UNIFIED_API_KEY=change-me
 
 # Provider API keys — leave blank to skip that provider
 GOOGLE_API_KEY=

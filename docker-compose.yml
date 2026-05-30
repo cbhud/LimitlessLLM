@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  llmapi:
+    build: .
+    container_name: limitlessllm-api
+    ports:
+      - "127.0.0.1:3001:3001"
+    env_file:
+      - .env
+    volumes:
+      - ./config.yaml:/app/config.yaml
+    restart: unless-stopped
